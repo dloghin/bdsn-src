@@ -1,0 +1,30 @@
+To run Pi estimator on Hadoop using Pipes:
+
+1. Compile Pi and input generator on your platform (x86/x64/ARM GNU/Linux with gcc)
+
+   make
+
+2. Generate input files
+
+   ./pi-gen
+
+3. Copy the binary (pi) and the input files (pi-part-<n>) on HDFS. For example, 
+the binary can be placed in:
+   /user/hadoop/bin/pi
+and the input files in:
+   /user/hadoop/pi-in/pi-part-*
+
+You can copy the files with:
+   hadoop dfs -copyFromLocal <local-src> <HDFS-dst>
+
+4. Run Pi using the command:
+
+   hadoop pipes -D mapred.map.tasks=$NMAP -D mapred.reduce.tasks=$NRED -D hadoop.pipes.pi.nummaps=$NMAP -D hadoop.pipes.pi.numsamples=$NSAMPLES -D hadoop.pipes.java.recordreader=true -D hadoop.pipes.java.recordwriter=true -program $EXE -input $INDIR -output $OUTDIR
+
+For our experiments:
+   NMAP=16
+   NRED=1
+   NSAMPLES=1000000000
+   EXE=/user/hadoop/bin/pi
+   INDIR=/user/hadoop/pi-in/
+   OUTDIR=/user/hadoop/pi-out/
