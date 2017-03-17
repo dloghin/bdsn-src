@@ -10,3 +10,13 @@ This repository contains the code for:
 All the other benchmarks and programs are to be downloaded from 
 their associated websites. For more details about this, visit:
 http://www.comp.nus.edu.sg/~dumitrel/bdsn.html.
+
+CODE LICENSE
+
+- Pi estimator code (under hadoop/ folder) is licensed under 
+the Apache License, Version 2.0 
+(http://www.apache.org/licenses/LICENSE-2.0).
+
+- Code under sys-bench/ folder is licensed under 
+the GNU General Public License version 3 
+(http://www.gnu.org/licenses/gpl.html) .
