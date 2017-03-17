@@ -18,28 +18,53 @@
 
 #!/bin/bash
 
-ARCH=$(uname -m)
+# Please set the correct path to java
+JVM="java"
+# Please set the correct path to java compiler
+JVC="javac"
+
 
 BASEDIR=$(dirname $0)
-
-JVM="java"
-
 CP=$BASEDIR
 
-PRG="FloatInt"
 
-IT=5000000000
-
-if [ $# -lt 1 ]; then
-	echo "Usgae: $0 <cores>"
+if [ $# -lt 2 ]; then
+	echo "Usage: $0 <bench> <cores>"
+	echo "       where bench is FloatInt or Stall" 
 	exit 1
 fi
+BENCH=$1
+CORES=$(($2-1))
 
-cores=$(($1-1))
+case $BENCH in
+	"FloatInt")
+		IT=5000000000
+	;;
+	"Stall")
+		IT=5000000000
+	;;
+	*)
+		echo "Unknown benchmark $BENCH"
+		exit 1
+	;;
+esac
 
-for core in `seq 0 $cores` ; do
-	MASK=$((2**$core))
-	taskset $MASK $JVM -cp $CP $PRG $IT & 
+# compile
+if ! [ -f "$BENCH.class" ]; then
+	if ! [ -f "Common.java" ]; then
+		echo "Common.java not found!"
+		exit 1
+	fi
+	if ! [ -f "$BENCH.java" ]; then
+                echo "$BENCH.java not found!"
+                exit 1 
+        fi 
+	$JVC Common.java $BENCH.java
+fi  
+
+# run
+for CORE in `seq 0 $CORES` ; do
+	taskset -c $CORE $JVM -cp $CP $BENCH $IT & 
 done
 
 wait
